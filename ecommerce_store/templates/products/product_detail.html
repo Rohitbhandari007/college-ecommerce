@@ -1,0 +1,191 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load users_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <img class="img-fluid" src="{{ object.product_img1.url }}">
+      </div>
+      <div class="col">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <h3 style="display:inline">{{ object.product_name }}</h3>
+              {% if not item_is_faved %}
+                <form method="post" action="{% url 'create_fav' object.pk %}?next={{ request.path }}" style="display:inline">
+                  {% csrf_token %}
+                    <input class="fav-list-icon float-right" type="image" src="{% static 'images/heart_empty.svg' %}" alt="Submit">
+                </form>
+              {% else %}
+                <form method="post" action="{% url 'delete_fav' item_is_faved.pk %}?next={{ request.path }}" style="display:inline">
+                  {% csrf_token %}
+                  <input class="fav-list-icon float-right" type="image" src="{% static 'images/heart_red.svg' %}" alt="Submit">
+                </form>
+              {% endif %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label>Brand:</label>
+              <a href="#" class="text-decoration-none text-info">{{ object.brand.brand_name }}</a>
+            </div>
+            <div class="col-7">
+              <label>Category: </label>
+              <a href="#" class="text-decoration-none text-info">{{ object.subcategory.subcategory_name }}</a>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div>
+                <h1 class="display-3 text-danger" style="display:inline">{{ object.price_per_unit }}</h1>
+                <h6 class="text-danger" style="display:inline">$</h6>
+              </div>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col">
+              <div class="btn-toolbar float-right">
+                <form method="post" action="{% url 'add_item_to_cart' object.pk %}">
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <label>Choose Amount</label>
+                    <select name="quantity" class="form-control">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-success btn-lg" type="submit">Add to the Card</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <div class="row">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <h4>Product Details</h4>
+            <hr>
+          </div>
+        </div>
+        {% if uncountable_product_info %}
+          <div class="row">
+            <div class="col bg-light text-dark">
+              <h9>Amount</h9>
+            </div>
+            <div class="col-9 bg-light text-dark">
+              <p>{{ uncountable_product_info.amount }} {{ uncountable_product_info.unit }}</p>
+            </div>
+          </div>
+        {% elif countable_product_info %}
+          <div class="row">
+            <div class="col bg-light text-dark">
+              <h9>Amount</h9>
+            </div>
+            <div class="col-9 bg-light text-dark">
+              <p>{{ countable_product_info.count }} per pack</p>
+            </div>
+          </div>
+        {% endif %}
+        {% if object.product_description %}
+          <div class="row">
+            <div class="col bg-light text-dark">
+              <h9>Product Description</h9>
+            </div>
+            <div class="col-9 bg-light text-dark">
+              <p>{{ object.product_description|linebreaks }}</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <br><br>
+    <div class="row">
+      <div class="col">
+        <h4>Reviews</h4>
+        <hr>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        {% if not avg_product_rate %}
+          <h6>Be first to write a review</h6>
+        {% else %}
+          <h1>{{ avg_product_rate }} Out Of 5</h1>
+          <img class="img-fluid" src="data:image/png;base64,{{ rate_diagram }}">
+        {% endif %}
+      </div>
+      <div class="col-8">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              {% if user.is_authenticated %}
+                <h6>Write a Review</h6>
+                <form method="post" action="{% url 'write_review' object.pk %}?next={{ request.path }}">
+                  {% csrf_token %}
+                  <p>
+                    <select name="review_rate" class="form-control">
+                      <option value="0">I have no idea</option>
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+                  </p>
+                  <div class="form-group">
+                    <textarea name = "review_text" class="form-control" rows="3"></textarea>
+                  </div>
+                  <button class="btn btn-info float-right" type="submit">Comment</button>
+                </form>
+              {% else %}
+                <h4 class="text-muted text-center">Sign In To Leave A Review</h4>
+              {% endif %}
+            </div>
+          </div>
+          {% for rev in reviews %}
+            <div class="row">
+              <div class="col">
+                <div class="card border-0">
+                  <div class="card-body">
+                    {% if user.is_authenticated and user.pk == rev.user.pk %}
+                      <form method="post" action="{% url 'delete_review' rev.pk %}?next={{ request.path }}">
+                        {% csrf_token %}
+                        <button class="btn btn-lik text-decoration-none text-muted float-right" style="font-size:12px" type="submit">Delete</button>
+                      </form>
+                    {% endif %}
+                    <h7><strong>{{ rev.user.first_name }}</strong> </h7>
+                    {% with ''|center:5 as range %}
+                      {% for _ in range %}
+                        {% if forloop.counter0 < rev.rate %}
+                          <span class="fa fa-star" style="color:orange"></span>
+                        {% else %}
+                          <span class="fa fa-star"></span>
+                        {% endif %}
+                      {% endfor %}
+                    {% endwith %}
+                    <p>
+                      <h8>Reviewed on {{ rev.review_date }}</h8>
+                    </p>
+                    <p>{{ rev.review_body|linebreaks }}</p>
+                  </div>
+                </div>
+                <hr>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

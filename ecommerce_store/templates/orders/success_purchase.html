@@ -1,0 +1,22 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}
+successfull purchase
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+        <img class="rounded mx-auto d-block" src="{% static 'images/food_truck1.png' %}"></img>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h3 align="center">Thanks for your shopping!</h3>
+      <h3 align="center">Your order will be posted as soon as possible</h3>
+    </div>
+  </div>
+</div>
+{% endblock content %}

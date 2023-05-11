@@ -1,0 +1,73 @@
+{% extends '_base.html' %}
+
+{% block title %}Grocery{% endblock title %}
+
+{% block content %}
+
+
+<div class="loader" id="loader">
+Loading
+</div>
+
+    <div class="row allproducts" id="main-div">
+    {% for product in products %}
+      <div class="col-md-4 productcard">
+          <div class="card text-center">
+            <a href="{% url 'product_detail' product.pk %}">
+              {% if  product.product_img1 %}
+              <img class="product-img" src="{{ product.product_img1.url }}">
+              {% else %}
+              <i class="fa fa-home"></i>
+              {% endif %}
+            </a>
+              <div class="card-body">
+                <h7 class="card-title">
+                  <a href="{% url 'product_detail' product.pk %}" class="text-dark text-decoration-none">{{ product.product_name }}</a>
+                </h7>
+            </div>
+              <div class="card-footer">
+                <div class="float-center">
+                  <label href="#" class="text-dark">{{ product.price_per_unit }}$</label>
+                  <br>
+                  <form method="post" action="{% url 'add_item_to_cart' product.pk %}">
+                    {% csrf_token %}
+                    <button class="btn btn-success btn-block" type="submit">Add to the cart</button>
+                  </form>
+                </div>
+              </div>
+          </div>
+          <br>
+        </div>
+    {% endfor %}
+    </div>
+{% endblock content %}
+
+{% block footer %}
+{% comment %}
+<footer class="bg-dark text-left text-lg-left">
+  <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.01);">
+    <a class="text-primary" style="text-decoration: none" href="{% url 'about' %}">About Us</a>
+  </div>
+</footer>
+{% endcomment %}
+
+
+<script>
+
+var myVar;
+document.getElementById("main-div").style.display = "none";
+let maindiv = document.getElementById("main-div")
+console.log(maindiv)
+function myFunction() {
+  myVar = setTimeout(showPage, 500);
+}
+
+function showPage() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("main-div").style.display = "flex";
+}
+
+myFunction()
+
+</script>
+{% endblock footer %}

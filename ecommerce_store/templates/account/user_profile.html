@@ -1,0 +1,18 @@
+{% extends '_base_profile.html' %}
+{% load static %}
+{% block title %}User Profile{% endblock title %}
+
+{% block profile_content %}
+  <div class="card">
+    <div class="card-header">
+      User Info
+    </div>
+    <div class="card-body">
+      <p>Name: {{ user.first_name }} {{ user.last_name }}</p>
+      <p>Email: {{ user.email }}</p>
+      <p>Birth Date: {{ profile.birth_date }}</p>
+      <p>Phone Number: {{ profile.phone_number }}</p>
+      <a class="text-decoration-none btn text-warning" style="display:inline" href="{% url 'profile_edit' user.pk %}">Edit</a>
+    </div>
+  </div>
+{% endblock profile_content %}

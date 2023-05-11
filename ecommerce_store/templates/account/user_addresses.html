@@ -1,0 +1,35 @@
+{% extends '_base_profile.html' %}
+{% load static %}
+{% block title %}Addresses{% endblock title %}
+
+{% block profile_content %}
+  <div class="container">
+    <h5 style="display:inline">Addresses</h5>
+    <a class="text-decoration-none float-right" style="display:inline" href="{% url 'add_new_address' %}">+Add new address</a>
+    <br><br>
+    {% if not addresses %}
+      <h5 class="text-muted text-center">No Addresses</h5>
+    {% endif %}
+    {% for address in addresses %}
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <p>City: {{ address.city }}</p>
+              <p>Zip Code: {{ address.zip_code }}</p>
+              <p>Address: {{ address.adress|linebreaks }}</p>
+              <p>
+                <form action="{% url 'delete_address' address.pk %}" method="post">
+                  {% csrf_token %}
+                  <a class="text-decoration-none btn text-warning" style="display:inline" href="{% url 'edit_address' address.pk %}">Edit</a> |
+                  <button class="text-decoration-none btn btn-link text-danger" style="display:inline" type="submit">Delete</button>
+                </form>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+    {% endfor %}
+  </div>
+{% endblock profile_content %}

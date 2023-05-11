@@ -1,0 +1,25 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+jupyter = "*"
+notebook = "*"
+
+[packages]
+django = "==2.2.7"
+psycopg2-binary = "==2.8.4"
+django-allauth = "==0.40.0"
+django-crispy-forms = "==1.8.0"
+pillow = "==6.2.1"
+matplotlib = "*"
+numpy = "==1.18.1"
+zeep = "*"
+stripe = "==2.32.0"
+django-jazzmin = "*"
+kiwisolver = "*"
+
+[requires]
+python_version = "3.10"
